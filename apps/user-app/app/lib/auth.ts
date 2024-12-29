@@ -6,12 +6,11 @@ import CredentialsProvider from "next-auth/providers/credentials"
 export const authOptions : NextAuthOptions = {
     providers: [
         CredentialsProvider({
-          // The name to display on the sign in form (e.g. "Sign in with...")
+
           name: "Credentials",
-          // `credentials` is used to generate a form on the sign in page.
        
           credentials: {
-            phone: { label: "Phone Number", type: "text", placeholder: "123123",required:true },
+            phone: { label: "Phone Number", type: "text", placeholder: "eg : Dosw@3221",required:true },
             password: { label: "Password", type: "password",required:true }
           },
           async authorize(credentials : any, req ) {
@@ -28,8 +27,8 @@ export const authOptions : NextAuthOptions = {
                 if(PasswordValidation){
                     return {
                         id:existingUser.id.toString(),
-                        name: existingUser.name,
-                        phone:existingUser.number
+                        name: existingUser.name || "Anonymous",
+                        email:existingUser.number
                     }
                 }
                 return null;
@@ -44,8 +43,8 @@ export const authOptions : NextAuthOptions = {
                 })
                 return {
                     id:user.id.toString(),
-                    name:user.name,
-                    number:user.number
+                    name:user.name || "Anonymous",
+                    email:user.number
                 }
             } catch (error) {
              console.error(error)   
@@ -54,6 +53,12 @@ export const authOptions : NextAuthOptions = {
             return null;
           }
         })
-      ]
+      ],
+      session:{
+        strategy:'jwt'
+      },
+      jwt:{
+        secret : process.env.NEXTAUTH_SECRET
+      }
     
 }
