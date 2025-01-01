@@ -14,7 +14,6 @@ export const authOptions : NextAuthOptions = {
             password: { label: "Password", type: "password",required:true }
           },
           async authorize(credentials : any, req ) {
-            const hashedPassword = await bcrypt.hash(credentials?.password,10)
             
             const existingUser = await db.user.findFirst({
                 where:{
@@ -23,7 +22,7 @@ export const authOptions : NextAuthOptions = {
             })
 
             if(existingUser){
-                const PasswordValidation = await bcrypt.compare(credentials.password,existingUser.password)
+                const PasswordValidation = credentials.password === existingUser.password
                 if(PasswordValidation){
                     return {
                         id:existingUser.id.toString(),
@@ -35,6 +34,8 @@ export const authOptions : NextAuthOptions = {
             }
 
             try {
+              const hashedPassword = await bcrypt.hash(credentials?.password,10)
+
                 const user = await db.user.create({
                     data:{
                         number:credentials.phone,
@@ -54,11 +55,20 @@ export const authOptions : NextAuthOptions = {
           }
         })
       ],
-      session:{
-        strategy:'jwt'
+      secret: process.env.NEXTAUTH_SECRET || "secret",
+      callbacks: {
+        async jwt({ token, user }) {
+          if (user) {
+              token.sub = user.id; // Ensure the `id` is added to the token
+          }
+          return token;
       },
-      jwt:{
-        secret : process.env.NEXTAUTH_SECRET
-      }
+        // TODO: can u fix the type here? Using any is bad
+        async session({ token, session }: any) {
+            session.user.id = token.sub
+
+            return session
+        }
+    }
     
 }
