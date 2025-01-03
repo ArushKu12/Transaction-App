@@ -22,7 +22,7 @@ export default function RootLayout({
     <html lang="en">
       <Providers>
         
-      <body className={inter.className}>
+      <body className={`${inter.className} bg-gray-100`}>
       <AppbarClient />
         {children}
       </body>

@@ -21,6 +21,18 @@ model User {
   password    String
   onRampTransaction onRampTransaction[]
   Balance Balance[]
+  SentTransfers p2pTransfer[] @relation(name: "FromUserRelation")
+  RecievedTransfers p2pTransfer[] @relation(name: "ToUserRelation")
+}
+
+model p2pTransfer {
+  id Int @id @default(autoincrement())
+  amount Int
+  TimeStamp DateTime
+  fromUserId Int
+  FromUser User @relation(name: "FromUserRelation",fields: [fromUserId],references: [id])
+  toUserId Int
+  ToUser User @relation(name: "ToUserRelation",fields: [toUserId],references: [id])
 }
 
 model Merchant {
