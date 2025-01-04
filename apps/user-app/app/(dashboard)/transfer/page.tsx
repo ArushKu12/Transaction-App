@@ -23,7 +23,15 @@ declare module "next-auth" {
     }
 }
 
-
+interface OnRampTransaction {
+    id: number;
+    userId: number;
+    amount: number;
+    status: string;
+    token: string;
+    provider: string;
+    startTime: Date;
+}
 
 async function getBalance() {
     const session = await getServerSession(authOptions);
@@ -40,7 +48,7 @@ async function getBalance() {
 
 async function getOnRampTransactions() {
     const session = await getServerSession(authOptions);
-    const txns = await prisma.onRampTransaction.findMany({
+    const txns : OnRampTransaction[]= await prisma.onRampTransaction.findMany({
         where: {
             userId: Number(session?.user?.id)
         }
