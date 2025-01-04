@@ -6,6 +6,14 @@ import prisma from "@repo/db/client";
 import { BalanceCard } from "../../../components/BalanceCard";
 import { PeerTransactions } from "../../../components/PeerTransactions";
 
+interface P2PTransaction {
+    id:number;
+    TimeStamp: Date;
+    amount: number;
+    fromUserId: number;
+    toUserId: number;
+}
+
 async function getBalance() {
     const session = await getServerSession(authOptions);
     const balance = await prisma.balance.findFirst({
@@ -21,7 +29,7 @@ async function getBalance() {
 
 async function getp2pTransactions() {
     const session = await getServerSession(authOptions);
-    const txns = await prisma.p2pTransfer.findMany({
+    const txns : P2PTransaction[] = await prisma.p2pTransfer.findMany({
         where: {
             OR:[
                 {fromUserId : Number(session?.user.id)},
@@ -31,7 +39,6 @@ async function getp2pTransactions() {
     });
     
     return txns.map(t => ({
-        //@ts-ignore
         time: t.TimeStamp,
         amount: t.amount,
         fromUserId: t.fromUserId,
