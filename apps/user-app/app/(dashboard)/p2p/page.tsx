@@ -31,6 +31,7 @@ async function getp2pTransactions() {
     });
     
     return txns.map(t => ({
+        //@ts-ignore
         time: t.TimeStamp,
         amount: t.amount,
         fromUserId: t.fromUserId,
