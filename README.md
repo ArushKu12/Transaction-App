@@ -28,7 +28,7 @@ A Paytm-like wallet application built using **Next.js** with an auxiliary backen
    npx prisma seed
 
   4.**Run the Project**
-    At the Root Directory Run
     ```sh
+    cd ../..
     npm run dev
     
